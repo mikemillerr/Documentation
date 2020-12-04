@@ -76,26 +76,28 @@ We should be greeted with the following prompt: root@archiso ~# _
 - Adjust locales and make keyboard settings permanent
 
 	- Set time zone with symlink:
-```console 
-# ln -sf /usr/share/zoneinfo/Europe/Berlin /etc/localtime
-```
+	
+   ```console
+    # ln -sf /usr/share/zoneinfo/Europe/Berlin /etc/localtime
+    ```
 
 	- Sync hw-clock:
-```console
-# hwclock --systohc (double dash)
-```
+
+    ```console 
+    # hwclock --systohc (double dash)
+    ```
 
 	- Install vim or other editor to modify the following textfiles:
-```console
-# hwclock --systohc (double dash)
-				
-# pacman -S vim
-```
+
+    ```console		
+    # pacman -S vim
+    ```
 
 	- Uncomment the line en_US.UTF-8 UTF-8 in /etc/locale.gen and generate the locale with:
-```console
-# locale-gen
-```
+
+    ```console
+    # locale-gen
+    ```
 
 	- Make keyboard changes permanent by adding the following line to a newly created /etc/vconsole.conf
 
@@ -114,6 +116,7 @@ We should be greeted with the following prompt: root@archiso ~# _
 # grub-install /dev/sda
 
 # grub-mkconfig -o /boot/grub/grub.cfg
+```
 
 - Create a new user called spark and add him to the wheel group:
 
@@ -123,10 +126,11 @@ We should be greeted with the following prompt: root@archiso ~# _
 
 - Give the spark user password-less sudo rights. This is not very save and only recommended for non productive setups.  
 	
-```console		
-# visudo
-```
-	Uncomment the line:
+    ```console		
+    # visudo
+    ```
+	
+    Uncomment the line:
 
 	%wheel ALL=(ALL) NOPASSWD: ALL
 
@@ -137,11 +141,13 @@ We should be greeted with the following prompt: root@archiso ~# _
 ```console
 # passwd spark
 ```
+
 - Exit chroot
 	
 ```console
 #  exit
 ```
+
 - Shutdown the System
 
 ```console
@@ -171,13 +177,13 @@ $ sudo systemclt enable sshd --now:
 
 - Give VM static Ip address. As mentioned above, the VM has two network devices. enp0s3 for communication with the internet, and enp0s8 for host communication. This is the connection where we want to keep a static ip, so that the machines will always find each other after reboot. Also we need to set the hostname of the vm so that we can create aliases for the machines. To set this up we use NM tui:
 	
-	```console
+    ```console
+    $ sudo nmtui
+    ```	
 
-	$ sudo nmtui
+    - Edit a connection:
 	
-	- Edit a connection:
-	
-	- Choose Wired Connection 2, confirm that the Device is enp0s8, if not try Connection 1
+   - Choose Wired Connection 2, confirm that the Device is enp0s8, if not try Connection 1
 
 	- In IPv4 Configuration switch to manual and enter the spark-master ip-adress: 192.168.56.200. This address corresponds to the address of the host-only network created in the beginning. In our case the vboxnet* adapter should have the ip address 192.168.56.1. If its not the first adapter created adjust the addresses accordingly. Leave the rest in default and quit.
 
@@ -203,18 +209,23 @@ $ sudo systemclt enable sshd --now:
 	
 	[spark@spark-master ~]$ curl "https://ftp.fau.de/apache/spark/spark-3.0.1/spark-3.0.1-bin-hadoop2.7.tgz" -o spark.tgz
 
-- Untar with:
+    - Untar with:
 	
+    ```console
 	tar zxf
-
-- Remove the tarbal with:
-	
-	rm spark.tgz
+    ```
+    
+    - Remove the tarbal with:
+	```console
+    rm spark.tgz
+    ```
 
 - Change the directory name with:
 	
+    ```console
 	mv spark-3.0ß.1.-bin-hadoop2.7/ spark
-
+    ```
+    
 At this point we can clone the spark-master. Next we will make small changes to the clones and exchange ssh keys with the VMs so that the master can ssh into the worker without a password. Finally we have to make some changes to some spark config files and install the notebook. In the end we will run some example code on the cluster to verify that the installation was successful. 
 
 ## Clone the spark-master to create the workers
@@ -232,27 +243,34 @@ At this point we can clone the spark-master. Next we will make small changes to 
 
 - Verfiy the connection by pinging the workers from the master with:
 
-	$ ping 192.168.56.201
+```console
+$ ping 192.168.56.201
+```
 
 - Now let's make ssh passwordless by placing the masters public key into the authorized_keys folder
 
 	- Generate a ssh key in the master with:
-
+    ```console
 	$ ssh-keygen (leave passphrase blank, and everything at default)
-
+    ```
 		- Create and a .ssh folder in the home directory of the worker:
-
+        
+        ```console
 		$ ssh worker1 'mkdir ~/.ssh'	
-
+        ```
+        
 		- Now place the generated key into the workers:
-
+        
+        ```console
 		$ cat ./ssh/id_rsa.pub | ssh worker1 'cat >> .ssh/authorized_keys'
-
+        ```
+        
 		- Verify that you have passwordless ssh access:
-
+        ```console
 		$ ssh worker1
-
-		- Repeate procedure for the other workers
+        ```
+		
+        - Repeate procedure for the other workers
 
 
 - In the following steps we need to tell spark about our cluster setup. First we inform the slaves about their master address and then the master of the address of the slaves.
@@ -260,13 +278,15 @@ At this point we can clone the spark-master. Next we will make small changes to 
 	- Go to worker1, you can do this via the VM windows, but also via ssh, since we just finished setting it up . The advantage is that you can now use your hosts terminal and use copy/paste.
 
 	- go to the conf directory of spark
-
+    
+    ```console
 	$ cd /home/spark/spark/conf
-
+    ```
+    
 	- cp the spark-env.sh.template
-
-	$ cp spark-env.sh.template spark-env.sh
-	
+	```console
+    $ cp spark-env.sh.template spark-env.sh
+	```
 	- Add the following lines:
 	
 	SPARK_MASTER_IP=192.168.56.200
@@ -280,14 +300,18 @@ At this point we can clone the spark-master. Next we will make small changes to 
 	- Go to the master
 
 	- go to the conf directory
-
+    
+    ```console    
 	$ cd  /home/spark/spark/conf
-
-	- Cp the slaves.template
-
+    ```
+	
+    - Cp the slaves.template
+    
+    ```console
 	$ cp slaves.template slaves
-
-	- Modfiy slaves, remove the localhost and add the following lines:
+    ```
+	
+    - Modfiy slaves, remove the localhost and add the following lines:
 
 	worker1
 	worker2
@@ -295,45 +319,58 @@ At this point we can clone the spark-master. Next we will make small changes to 
 - Start the cluster
 
 	- Go to sbin folder
-
+    
+    ```console
 	$ cd /home/spark/spark/sbin
-
+    ```
 	- execute the start-all script
-
+    
+    ```console
 	$ ./start-all.sh
-
+    ```
+    
 This should start the spark cluster on our VMs. We can verify the successful deployment by inspecting the Web-UI on port 8080 of the master. The deployed workers should be visible in the Workers section. If not: Recheck if ssh access form master to workers is working. Check ip addresses in the spark config files. Also check the log files shown after runing the start-all.sh script for hints. 
 
 ## Installing jupyter notebook and verifing the cluster deployment
 
-- On the master create a virtualenv 
-	
-	$ mkdir ~/sparkvenv
+- On the master create a virtualenv
 
+```console
+$ mkdir ~/sparkvenv
+```
+    
 - Create a virtualenvironment in the created folder
 
-	$ virtualenv ~/sparkvenv
+```console
+$ virtualenv ~/sparkvenv
+```
 
 - Start enter the venv 
-
-	$ source ~/sparkvenv/bin/activate
+```console
+$ source ~/sparkvenv/bin/activate
+```
 
 - Install jupyter with pip
 
-	$ pip install jupyter
-
+```console
+$ pip install jupyter
+```
 - Setting up jupyter so we can access is from the host
 
 	- Generate a jupyter config directory with
-
+    
+    ```console
 	$ jupyter notebook --generate-config
-
-	- Set a passwort for jupyter so we don't need to deal with tokens
-
+    ```
+	
+    - Set a passwort for jupyter so we don't need to deal with tokens
+    
+    ```console
 	$ jupyter notebook password
-
+    ```
+    
 	- Modify Jupyter configuration file to enable access from the host ~/.jupyter/jupyter_notebook_config.py add the following lines:
-
+    
 	c.NotebookApp.ip = '192.168.56.200'
 
 	c.NotebookApp.open_browser = False
@@ -342,7 +379,7 @@ This should start the spark cluster on our VMs. We can verify the successful dep
 Now we need to set some enviroment variable so that pyspark will find our spark installation and so that we can start pyspark together with the notebook and install pyspark into the created environment.
 
 	- Add the following lines to ~/.bashrc
-
+    
 	export SPARK_HOME="/home/spark/spark"
 	export PYSPARK_DRIVER_PYTHON=jupyter
 	export PYSPARK_DRIVER_PYTHON_OPTS="notebook"
