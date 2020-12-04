@@ -152,7 +152,7 @@ We should be greeted with the following prompt: root@archiso ~# _
 - Shutdown the System
 
 ```console
-# shutdown and get a coffee.
+# shutdown # and get a coffee.
 ```
 
 ## Setting up the Operating System
@@ -209,18 +209,19 @@ $ sudo systemclt enable sshd --now:
 - Download spark:
 	
 	- Go to the download [link](https://spark.apache.org/downloads.html) on the apache spark site. Choose the version you want to use. In this example we use *spark.3.0.1-bin-hadoop2.7.tgz*. Get the downloadlink for the server given on top. And download the file into the home folder using curl:
-	
-	[spark@spark-master ~]$ curl "https://ftp.fau.de/apache/spark/spark-3.0.1/spark-3.0.1-bin-hadoop2.7.tgz" -o spark.tgz
 
+    ```console
+    [spark@spark-master ~]$ curl "https://ftp.fau.de/apache/spark/spark-3.0.1/spark-3.0.1-bin-hadoop2.7.tgz" -o spark.tgz
+    ```
     - Untar with:
 	
     ```console
     $ tar zxf
     ```
     
-    - Remove the tarbal with:
-	
-	```console
+    - Remove the tarball with:
+    
+    ```console
     $ rm spark.tgz
     ```
 
@@ -255,27 +256,27 @@ $ ping 192.168.56.201
 
 	- Generate a ssh key in the master with:
     
-    ```console
-	$ ssh-keygen #(leave passphrase blank, and everything at default)
-    ```
+    	```console
+    	$ ssh-keygen #(leave passphrase blank, and everything at default)
+    	```
 	
-	- Create and a .ssh folder in the home directory of the worker:
+	- Create and a *.ssh* folder in the home directory of the worker:
         
-    ```console
-	$ ssh worker1 'mkdir ~/.ssh'	
-	```
+    	```console
+    	$ ssh worker1 'mkdir ~/.ssh'	
+    	```
         
 	- Now place the generated key into the workers:
         
-    ```console
-	$ cat ./ssh/id_rsa.pub | ssh worker1 'cat >> .ssh/authorized_keys'
-    ```
+    	```console
+    	$ cat ./ssh/id_rsa.pub | ssh worker1 'cat >> .ssh/authorized_keys'
+    	```
         
 	- Verify that you have passwordless ssh access:
     
-	```console
-	$ ssh worker1
-    ```
+    	```console
+    	$ ssh worker1
+    	```
 		
     - Repeate procedure for the other workers
 
@@ -285,15 +286,15 @@ $ ping 192.168.56.201
 
 	- go to the conf directory of spark
     
-    ```console
-	$ cd /home/spark/spark/conf
-    ```
+    	```console
+    	$ cd /home/spark/spark/conf
+    	```
     
 	- cp the spark-env.sh.template
 	
-	```console
-    $ cp spark-env.sh.template spark-env.sh
-	```
+    	```console
+	$ cp spark-env.sh.template spark-env.sh
+        ```
 	
 	- Add the following lines:
     
@@ -310,15 +311,15 @@ $ ping 192.168.56.201
 
 	- go to the conf directory
     
-    ```console    
-	$ cd  /home/spark/spark/conf
-    ```
+    	```console
+        $ cd  /home/spark/spark/conf
+        ```
 	
-    - Cp the slaves.template
-    
-    ```console
-	$ cp slaves.template slaves
-    ```
+	- Cp the slaves.template
+	
+        ```console
+        $ cp slaves.template slaves
+        ```
 	
     - Modfiy slaves, remove the localhost and add the following lines:
 	
@@ -330,15 +331,15 @@ $ ping 192.168.56.201
 - Start the cluster
 
 	- Go to sbin folder
-    
-    ```console
-	$ cd /home/spark/spark/sbin
-    ```
+	
+        ```console
+        $ cd /home/spark/spark/sbin
+	```
 	- execute the start-all script
     
-    ```console
+        ```console
 	$ ./start-all.sh
-    ```
+        ```
     
 This should start the spark cluster on our VMs. We can verify the successful deployment by inspecting the Web-UI on port 8080 of the master. The deployed workers should be visible in the Workers section. If not: Recheck if ssh access form master to workers is working. Check ip addresses in the spark config files. Also check the log files shown after runing the start-all.sh script for hints. 
 
@@ -368,18 +369,18 @@ $ source ~/sparkvenv/bin/activate
 $ pip install jupyter
 ```
 
-- Setting up jupyter so we can access is from the host
+- Setting up jupyter so we can access is from the host.
 
 	- Generate a jupyter config directory with
-    
+	
     ```console
 	$ jupyter notebook --generate-config
     ```
 	
-    - Set a passwort for jupyter so we don't need to deal with tokens
-    
-    ```console
-	$ jupyter notebook password
+	- Set a passwort for jupyter so we don't need to deal with tokens.
+	
+	```console
+    $ jupyter notebook password
 	```
     
 	- Modify Jupyter configuration file to enable access from the host ~/.jupyter/jupyter_notebook_config.py add the following lines:
