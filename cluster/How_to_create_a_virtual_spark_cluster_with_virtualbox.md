@@ -107,7 +107,8 @@ We should be greeted with the following prompt: root@archiso ~# _
 	
 ```console
 # pacman -S grub linux linux-headers virtualbox-guest-dkms networkmanager python3 python-virtualenv python-pip vim openssh git jdk8-openjdk inetutils
-´´´
+```
+
 (Choose mkinitcpio --  default-option)
 
 - Install grub bootloader
@@ -176,11 +177,11 @@ $ sudo systemclt enable sshd --now:
 ```
 
 - Give VM static Ip address. As mentioned above, the VM has two network devices. enp0s3 for communication with the internet, and enp0s8 for host communication. This is the connection where we want to keep a static ip, so that the machines will always find each other after reboot. Also we need to set the hostname of the vm so that we can create aliases for the machines. To set this up we use NM tui:
-	
+
     ```console
     $ sudo nmtui
-    ```	
-
+    ```
+    
     - Edit a connection:
 	
    - Choose Wired Connection 2, confirm that the Device is enp0s8, if not try Connection 1
@@ -191,7 +192,7 @@ $ sudo systemclt enable sshd --now:
 	
 	- Reboot, now the VM should have the given internal ip.
 	
-- In the next step we setupt /etc/hosts so all machines know of each other. Modify the given examples for how many VMs you want to deploy. In this example we will created a spark-master, and will will later create two spark-worker nodes.
+- In the next step we setup */etc/hosts* so all machines know of each other. Modify the given examples for how many VMs you want to deploy. In this example we will created a spark-master, and will will later create two spark-worker nodes.
 
 	- Open /etc/hosts with sudo rights
 	
@@ -216,11 +217,12 @@ $ sudo systemclt enable sshd --now:
     ```
     
     - Remove the tarbal with:
+	
 	```console
     rm spark.tgz
     ```
 
-- Change the directory name with:
+    - Change the directory name with:
 	
     ```console
 	mv spark-3.0ß.1.-bin-hadoop2.7/ spark
@@ -250,28 +252,29 @@ $ ping 192.168.56.201
 - Now let's make ssh passwordless by placing the masters public key into the authorized_keys folder
 
 	- Generate a ssh key in the master with:
-    ```console
+    
+	```console
 	$ ssh-keygen (leave passphrase blank, and everything at default)
     ```
-		- Create and a .ssh folder in the home directory of the worker:
+	- Create and a .ssh folder in the home directory of the worker:
         
-        ```console
-		$ ssh worker1 'mkdir ~/.ssh'	
-        ```
+    ```console
+	$ ssh worker1 'mkdir ~/.ssh'	
+	```
         
-		- Now place the generated key into the workers:
+	- Now place the generated key into the workers:
         
-        ```console
-		$ cat ./ssh/id_rsa.pub | ssh worker1 'cat >> .ssh/authorized_keys'
-        ```
+    ```console
+	$ cat ./ssh/id_rsa.pub | ssh worker1 'cat >> .ssh/authorized_keys'
+    ```
         
-		- Verify that you have passwordless ssh access:
-        ```console
-		$ ssh worker1
-        ```
+	- Verify that you have passwordless ssh access:
+    
+	```console
+	$ ssh worker1
+    ```
 		
-        - Repeate procedure for the other workers
-
+    - Repeate procedure for the other workers
 
 - In the following steps we need to tell spark about our cluster setup. First we inform the slaves about their master address and then the master of the address of the slaves.
 
@@ -284,16 +287,17 @@ $ ping 192.168.56.201
     ```
     
 	- cp the spark-env.sh.template
+	
 	```console
     $ cp spark-env.sh.template spark-env.sh
 	```
+	
 	- Add the following lines:
 	
 	SPARK_MASTER_IP=192.168.56.200
-
 	SPARK_LOCAL_IP=<ip address of the workers host-only adapter (92.168.56.201-for worker1)>
 
-	- Repeate this for the other worker
+	- **Repeate this for the other worker**
 
 - Tell the master about the slaves:
 
@@ -367,28 +371,30 @@ $ pip install jupyter
     
     ```console
 	$ jupyter notebook password
-    ```
+	```
     
 	- Modify Jupyter configuration file to enable access from the host ~/.jupyter/jupyter_notebook_config.py add the following lines:
     
 	c.NotebookApp.ip = '192.168.56.200'
-
 	c.NotebookApp.open_browser = False
 
 	
 Now we need to set some enviroment variable so that pyspark will find our spark installation and so that we can start pyspark together with the notebook and install pyspark into the created environment.
 
-	- Add the following lines to ~/.bashrc
+   - Add the following lines to ~/.bashrc
     
+	```console
 	export SPARK_HOME="/home/spark/spark"
 	export PYSPARK_DRIVER_PYTHON=jupyter
 	export PYSPARK_DRIVER_PYTHON_OPTS="notebook"
-
+    ```
 	- Reload .bashrc with
-
-	source ~/.bashrc
+    	
+    ```console
+    $ source ~/.bashrc
+	```
 	
-	Install pyspark into the enviroment, make sure you are inside the enviroment indicated by command prompt.
+    - Install pyspark into the enviroment, make sure you are inside the enviroment indicated by command prompt.
 
 	pip install pyspark
 
