@@ -27,7 +27,7 @@ We should be greeted with the following prompt: root@archiso ~# _
 
 - Change keyboard layout to german(/ is next to the right shift key):
 
-'''console
+```console
 # loadkeys /usr/share/kbd/keymaps/i386/qwertz/de-latin1
 '''
 - Create a partition with cfdisk:
