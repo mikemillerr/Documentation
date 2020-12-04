@@ -31,9 +31,9 @@ We should be greeted with the following prompt: root@archiso ~# _
 # loadkeys /usr/share/kbd/keymaps/i386/qwertz/de-latin1
 ```
 - Create a partition with cfdisk:
-	
-	# cfdisk /dev/sda
-
+```console	
+# cfdisk /dev/sda
+```
 	- Choose dos
 
 	- New, default partition size, primary, Partition type: Linux (83)
@@ -43,67 +43,89 @@ We should be greeted with the following prompt: root@archiso ~# _
 	- Write Changes and Confirm with yes and quit
 
 - Format the partition with:
-	
-	# mkfs.ext4 /dev/sda1
 
+```console
+# mkfs.ext4 /dev/sda1
+```
 - mount the partition to /mnt
-	
-	# mount /dev/sda1 /mnt
+		
+```console
+# mkfs.ext4 /dev/sda1
+# mount /dev/sda1 /mnt
+```
 
 - Install the Arch on the now mounted partition
 	
-	# pacstarp /mnt base base-devel
+```console
+# pacstarp /mnt base base-devel
+```
 
 - Generate a fstab for the new system
 	
-	# genfstab -U /mnt >> /mnt/etc/fstab
+```console
+# genfstab -U /mnt >> /mnt/etc/fstab
+```
 
 - Change into the newly installed system
 	
-	# arch-chroot /mnt
-	(Notice the change of the input prompt)
+```console
+# arch-chroot /mnt
+```
+(Notice the change of the input prompt)
 
 - Adjust locales and make keyboard settings permanent
 
 	- Set time zone with symlink:
-	
-		# ln -sf /usr/share/zoneinfo/Europe/Berlin /etc/localtime
+```console 
+# ln -sf /usr/share/zoneinfo/Europe/Berlin /etc/localtime
+```
 
 	- Sync hw-clock:
-
-		# hwclock --systohc (double dash)
+```console
+# hwclock --systohc (double dash)
+```
 
 	- Install vim or other editor to modify the following textfiles:
-		
-		# pacman -S vim
+```console
+# hwclock --systohc (double dash)
+				
+# pacman -S vim
+```
 
 	- Uncomment the line en_US.UTF-8 UTF-8 in /etc/locale.gen and generate the locale with:
-	
-		# locale-gen
+```console
+# locale-gen
+```
 
 	- Make keyboard changes permanent by adding the following line to a newly created /etc/vconsole.conf
 
-		KEYMAP=de-latin1
+	*KEYMAP=de-latin1*
 	
 - sudo Install all needed packages
 	
-	# pacman -S grub linux linux-headers virtualbox-guest-dkms networkmanager python3 python-virtualenv python-pip vim openssh git jdk8-openjdk inetutils
-	(Choose mkinitcpio --  default-option)
+```console
+# pacman -S grub linux linux-headers virtualbox-guest-dkms networkmanager python3 python-virtualenv python-pip vim openssh git jdk8-openjdk inetutils
+´´´
+(Choose mkinitcpio --  default-option)
 
 - Install grub bootloader
-	
-	# grub-install /dev/sda
 
-	# grub-mkconfig -o /boot/grub/grub.cfg
+```console
+# grub-install /dev/sda
+
+# grub-mkconfig -o /boot/grub/grub.cfg
 
 - Create a new user called spark and add him to the wheel group:
-	
-	# useradd -d /home/spark -m -G wheel spark
+
+```console
+# useradd -d /home/spark -m -G wheel spark
+```
 
 - Give the spark user password-less sudo rights. This is not very save and only recommended for non productive setups.  
 	
-	# visudo
-	
+```console		
+# visudo
+```
 	Uncomment the line:
 
 	%wheel ALL=(ALL) NOPASSWD: ALL
@@ -112,15 +134,19 @@ We should be greeted with the following prompt: root@archiso ~# _
 
 - Set password for spark user:
 	
-	# passwd spark
-
+```console
+# passwd spark
+```
 - Exit chroot
 	
-	#  exit
-
+```console
+#  exit
+```
 - Shutdown the System
-	
-	# shutdown and get a coffee.
+
+```console
+# shutdown and get a coffee.
+```
 
 ## Setting up the Operating System
 
@@ -133,14 +159,20 @@ We should be greeted with the following prompt: root@archiso ~# _
 
 - Enable the networkmanger:
 
-	$ sudo systemctl enable NetworkManager --now
+```console
+$ sudo systemctl enable NetworkManager --now
+```
 
 - Enable the ssh Server:
 	
-	$ sudo systemclt enable sshd --now:
-	
+```console
+$ sudo systemclt enable sshd --now:
+```
+
 - Give VM static Ip address. As mentioned above, the VM has two network devices. enp0s3 for communication with the internet, and enp0s8 for host communication. This is the connection where we want to keep a static ip, so that the machines will always find each other after reboot. Also we need to set the hostname of the vm so that we can create aliases for the machines. To set this up we use NM tui:
 	
+	```console
+
 	$ sudo nmtui
 	
 	- Edit a connection:
