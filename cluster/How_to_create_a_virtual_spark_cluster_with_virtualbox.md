@@ -75,9 +75,9 @@ We should be greeted with the following prompt: root@archiso ~# _
 
 - Adjust locales and make keyboard settings permanent
 
-	- Set time zone with symlink:
-	
-   ```console
+    - Set time zone with symlink:
+
+    ```console
     # ln -sf /usr/share/zoneinfo/Europe/Berlin /etc/localtime
     ```
 
@@ -146,7 +146,7 @@ We should be greeted with the following prompt: root@archiso ~# _
 - Exit chroot
 	
 ```console
-#  exit
+# exit
 ```
 
 - Shutdown the System
@@ -198,10 +198,12 @@ $ sudo systemclt enable sshd --now:
 	
 	- Add the following lines
 
+	```console
 	192.168.56.200 master spark-master
 	192.168.56.201 worker1 spark-worker1
 	192.168.56.202 worker2 spark-worker2
-
+    ```
+	
 	- Save and quit
  
 - Download spark:
@@ -213,19 +215,19 @@ $ sudo systemclt enable sshd --now:
     - Untar with:
 	
     ```console
-	tar zxf
+    $ tar zxf
     ```
     
     - Remove the tarbal with:
 	
 	```console
-    rm spark.tgz
+    $ rm spark.tgz
     ```
 
     - Change the directory name with:
 	
     ```console
-	mv spark-3.0ß.1.-bin-hadoop2.7/ spark
+	$ mv spark-3.0ß.1.-bin-hadoop2.7/ spark
     ```
     
 At this point we can clone the spark-master. Next we will make small changes to the clones and exchange ssh keys with the VMs so that the master can ssh into the worker without a password. Finally we have to make some changes to some spark config files and install the notebook. In the end we will run some example code on the cluster to verify that the installation was successful. 
@@ -253,9 +255,10 @@ $ ping 192.168.56.201
 
 	- Generate a ssh key in the master with:
     
-	```console
-	$ ssh-keygen (leave passphrase blank, and everything at default)
+    ```console
+	$ ssh-keygen #(leave passphrase blank, and everything at default)
     ```
+	
 	- Create and a .ssh folder in the home directory of the worker:
         
     ```console
@@ -293,10 +296,12 @@ $ ping 192.168.56.201
 	```
 	
 	- Add the following lines:
-	
+    
+	```console
 	SPARK_MASTER_IP=192.168.56.200
 	SPARK_LOCAL_IP=<ip address of the workers host-only adapter (92.168.56.201-for worker1)>
-
+	```
+	
 	- **Repeate this for the other worker**
 
 - Tell the master about the slaves:
@@ -316,9 +321,11 @@ $ ping 192.168.56.201
     ```
 	
     - Modfiy slaves, remove the localhost and add the following lines:
-
+	
+	```console
 	worker1
 	worker2
+	```
 	
 - Start the cluster
 
@@ -350,6 +357,7 @@ $ virtualenv ~/sparkvenv
 ```
 
 - Start enter the venv 
+
 ```console
 $ source ~/sparkvenv/bin/activate
 ```
@@ -359,6 +367,7 @@ $ source ~/sparkvenv/bin/activate
 ```console
 $ pip install jupyter
 ```
+
 - Setting up jupyter so we can access is from the host
 
 	- Generate a jupyter config directory with
@@ -375,51 +384,57 @@ $ pip install jupyter
     
 	- Modify Jupyter configuration file to enable access from the host ~/.jupyter/jupyter_notebook_config.py add the following lines:
     
+	```console
 	c.NotebookApp.ip = '192.168.56.200'
 	c.NotebookApp.open_browser = False
+    ```
 
-	
 Now we need to set some enviroment variable so that pyspark will find our spark installation and so that we can start pyspark together with the notebook and install pyspark into the created environment.
 
-   - Add the following lines to ~/.bashrc
-    
-	```console
+- Add the following lines to bashrc: 
+
 	export SPARK_HOME="/home/spark/spark"
 	export PYSPARK_DRIVER_PYTHON=jupyter
 	export PYSPARK_DRIVER_PYTHON_OPTS="notebook"
-    ```
-	- Reload .bashrc with
-    	
-    ```console
-    $ source ~/.bashrc
-	```
 	
-    - Install pyspark into the enviroment, make sure you are inside the enviroment indicated by command prompt.
+- Reload .bashrc with
+    	
+```console
+$ source ~/.bashrc
+```
+	
+- Install pyspark into the enviroment, make sure you are inside the enviroment indicated by command prompt.
 
-	pip install pyspark
+```console
+$ pip install pyspark
+```
 
 Finally we can run the cluster with the follwing command, before change into the home folder or create a folder we to save the notebooks to:
 	
-	(sparkvenv) [spark@spark-master sparkscripts]$ pyspark --master spark://master:7077
+```console
+(sparkvenv) [spark@spark-master sparkscripts]$ pyspark --master spark://master:7077
+```
 
 This command will execute a notebook server listening on 192.168.56.200:8888, on the host we can go to that address and log into jupyter notebook with the given password. After that we can create a new python3 file and execute the following example code which calculates *pi*.
 
-	from pyspark import SparkContext
-	import random as rnd
-		
-	-- new cell --
+```python
+from pyspark import SparkContext
+import random as rnd
+```
 
-	%%timeit
-	SAMPLES = 10000000
+```python
+%%timeit
+SAMPLES = 10000000
 
-	def inside(p):     
-		x, y = rnd.random(), rnd.random()
-  		return x*x + y*y < 1
+def inside(p):     
+   x, y = rnd.random(), rnd.random()
+   return x*x + y*y < 1
 
-	count = sc.parallelize(range(0, SAMPLES)).filter(inside).count()
-	pi = 4 * count / SAMPLES
+count = sc.parallelize(range(0, SAMPLES)).filter(inside).count()
+pi = 4 * count / SAMPLES
 	
-	print(pi)
+print(pi)
+```
 
 You can compare your execution times with the ones given in the medium article. Check the masterUI if all workers are active. Also spark creates a applicationUI on port 4040 for each job, here you can get a lot of other information on the task the cluster is working on. 
 
