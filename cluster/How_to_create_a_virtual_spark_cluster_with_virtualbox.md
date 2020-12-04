@@ -29,7 +29,7 @@ We should be greeted with the following prompt: root@archiso ~# _
 
 ```console
 # loadkeys /usr/share/kbd/keymaps/i386/qwertz/de-latin1
-'''
+```
 - Create a partition with cfdisk:
 	
 	# cfdisk /dev/sda
