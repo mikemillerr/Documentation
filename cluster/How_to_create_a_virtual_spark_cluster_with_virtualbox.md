@@ -106,7 +106,7 @@ We should be greeted with the following prompt: root@archiso ~# _
 - sudo Install all needed packages
 	
 ```console
-# pacman -S grub linux linux-headers virtualbox-guest-dkms networkmanager python3 python-virtualenv python-pip vim openssh git jdk8-openjdk inetutils
+# pacman -S grub linux linux-headers virtualbox-guest-utils networkmanager python3 python-virtualenv python-pip vim openssh git jdk8-openjdk inetutils
 ```
 
 (Choose mkinitcpio --  default-option)
