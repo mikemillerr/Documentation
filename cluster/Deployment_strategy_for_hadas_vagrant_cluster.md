@@ -1,8 +1,19 @@
-Title:___How to deploy kubernetes with kubespray___
-Date:____23.02.2021__
+Title:___Deployment Strategy for Hada's Vagrant Cluster___
+Date:____12.03.2021__
 Author:__Gabriel Mendoza Reyes__
-Keyword: Cluster, Distributed Computing, Ansible, kubernetes, kubespray
-# How to Deploy Kubernetes with Kubespray
+Keyword: Cluster, Distributed Computing, Ansible, kubernetes, kubespray, hada, Vagrant
+# Deployment Strategy for Hada's Vagrant Cluster
+In the past days I gathered some experience in the deployment of kubernetes with kubesprays vagrant deployment. This deployment is fairly easy. I tried to deploy it offline mode but was never successful. I have the impression that this vagrant deployment is not really meant for offline deployment. Before I get into the trouble setting up a secured registry and all the things that go into it. I want to switch the deployment to hada's vagrant cluster. Where I have an offline setup. Hopefully the setup will work there. 
+
+# Prerequisites 
+Before deploying all artifact sources have to setup and tested. 
+Clone repo to the master.
+## Files_Repo
+	- execute download_artifact.sh to download all the necessary files and link those to the corresponding folder structure kubespray needs.
+
+## Apt-Repo
+	- Add docker repo to the apt-mirror and the master. 
+	- Learn how to validate those repos for the slaves to prevent errors and warnings.
 
 # Introduction
 Here I want to list the detailed steps to deploy kubernetes with kubespray. Basis will be the [documentation](https://kubernetes.io/docs/setup/production-environment/tools/kubespray/) of kubernetes and the git repo [/kubernetes-sigs/kubespray](https://github.com/kubernetes-sigs/kubespray) containing the playbooks.
